@@ -1,17 +1,16 @@
-import mestoSvg from '../images/mesto.svg'
-import profileSvg from '../images/profile__image.svg'
-import profilePencilSvg from '../images/pencil.svg'
 import Header from './Header';
 import Main from './Main';
 import Footer from './Footer';
 import {useState} from "react";
 import PopupWithForm from "./PopupWithForm";
+import ImagePopup from "./ImagePopup";
 
 function App() {
 
     const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false)
     const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false)
     const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false)
+    const [selectedCard, setSelectedCard]  = useState()
 
     const openEditPopup = () => {
         /*     popupEditForm.handleOpenPopup(
@@ -42,13 +41,17 @@ function App() {
                 validateAvatar.disableButton()*/
         setEditAvatarPopupOpen(true)
     }
+
     {/* закртие попапа*/}
-    const editProfileClose = () => {
+    const closeAllPopups = () => {
+        setEditAvatarPopupOpen(false)
+        setAddPlacePopupOpen(false)
         setEditProfilePopupOpen(false)
+        setSelectedCard(undefined)
     }
 
-    const addPlaceClose = () => {
-        setAddPlacePopupOpen(false)
+    const handleCardClick = (card) => {
+        setSelectedCard(card)
     }
 
     return <div className="page">
@@ -57,6 +60,7 @@ function App() {
             onEditProfile = {openEditPopup}
             onAddPlace = {openPopupPlace}
             onEditAvatar = {openAvatarChange}
+            onCardClick = {handleCardClick}
         />
         <PopupWithForm submitButtonTitle={'Сохранить'}
                        name={'edit-profile-form'}
@@ -64,7 +68,7 @@ function App() {
                        className={'popup_type_edit'}
                        title={'Редактировать профиль'}
                        isOpen={isEditProfilePopupOpen}
-                       onClose={editProfileClose}
+                       onClose={closeAllPopups}
         >
             <input id="name"
                    placeholder="Имя"
@@ -84,7 +88,7 @@ function App() {
                        className={'popup_type_plus'}
                        title={'Новое место'}
                        isOpen={isAddPlacePopupOpen}
-                       onClose={addPlaceClose }
+                       onClose={closeAllPopups }
         >
             <input id="title"
                    placeholder="Название"
@@ -99,6 +103,24 @@ function App() {
                     <span className="popup__error input-error-link"></span>
         </PopupWithForm>
 
+        <PopupWithForm submitButtonTitle={'Сохранить'}
+                       name={'card-form'}
+                       idForm={'avatar-form'}
+                       className={'popup_type_agreement'}
+                       title={'Обновить аватар'}
+                       isOpen={isEditAvatarPopupOpen}
+                       onClose={closeAllPopups}
+        >
+            <input id="agreement"
+                   placeholder="Ссылка на изображение"
+                   name="url"
+                   type="url"
+                   className="popup__input" required minLength="2" />
+                <span className="popup__error input-error-url"></span>
+        </PopupWithForm>
+
+        { selectedCard && <ImagePopup card={selectedCard}
+                                      onClose={closeAllPopups} /> }
         <Footer/>
     </div>
 }
