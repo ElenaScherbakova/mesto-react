@@ -1,4 +1,28 @@
+import {useEffect} from "react";
+
 function PopupWithForm({title, className, idForm, name, children, isOpen, onClose, submitButtonTitle}) {
+    const handleEscClose = (event) => {
+        if (event.key === 'Escape') {
+            onClose()
+        }
+    }
+
+    const closePopupByOverlay = (event) => {
+        if (event.target.classList.contains('popup') || event.target.classList.contains('popup__block')) {
+            onClose()
+        }
+    }
+
+    useEffect(() => {
+        document.addEventListener('keydown', handleEscClose);
+        document.addEventListener('mousedown', closePopupByOverlay);
+        return () => {
+            document.removeEventListener('keydown', handleEscClose);
+            document.removeEventListener('mousedown', closePopupByOverlay);
+        }
+    },[isOpen])
+
+
     return (
         <div className={`popup ${className} ${isOpen ? 'popup_opened' : 'popup_hidden'}`}>
             <div className="popup__container">

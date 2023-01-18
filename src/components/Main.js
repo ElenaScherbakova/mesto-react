@@ -1,10 +1,7 @@
-import profileSvg from "../images/profile__image.svg";
 import profilePencilSvg from "../images/pencil.svg";
 import {useEffect, useState} from "react";
 import API from "../utils/API";
 import Card from "./Card";
-import card from "./Card";
-
 
 function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
 
