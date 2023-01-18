@@ -10,35 +10,17 @@ function App() {
     const [isEditProfilePopupOpen, setEditProfilePopupOpen] = useState(false)
     const [isAddPlacePopupOpen, setAddPlacePopupOpen] = useState(false)
     const [isEditAvatarPopupOpen, setEditAvatarPopupOpen] = useState(false)
-    const [selectedCard, setSelectedCard]  = useState()
+    const [selectedCard, setSelectedCard]  = useState(null)
 
     const openEditPopup = () => {
-        /*     popupEditForm.handleOpenPopup(
-                 userNewInfo.getUserInfo())
-             validateEditProfile.resetErrors()
-             validateEditProfile.disableButton()*/
         setEditProfilePopupOpen(true)
     };
 
     const openPopupPlace = () => {
-        /*        popupNewCard.handleOpenPopup({
-                    name: "",
-                    link: "",
-                    likes:[],
-                    _id: "",
-                    owner: storage.user
-                })
-                validateAddPlace.resetErrors()
-                validateAddPlace.disableButton()*/
         setAddPlacePopupOpen(true)
     };
 
     const openAvatarChange = () => {
-        /*        popupChangeAvatar.handleOpenPopup({
-                    url: avatarImage.src
-                })
-                validateAvatar.resetErrors()
-                validateAvatar.disableButton()*/
         setEditAvatarPopupOpen(true)
     }
 
@@ -47,7 +29,7 @@ function App() {
         setEditAvatarPopupOpen(false)
         setAddPlacePopupOpen(false)
         setEditProfilePopupOpen(false)
-        setSelectedCard(undefined)
+        setSelectedCard(null)
     }
 
     const handleCardClick = (card) => {

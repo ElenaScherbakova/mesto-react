@@ -11,7 +11,15 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
     const [cards, setCards] = useState([])
 
     useEffect(() => {
-        {/* запрос данных пользователя */}
+        /* запрос данных пользователя */
+        // Нельзя использовать Promise.all, так как если провалится один из запросов,
+        // весь Promise.all будет rejected.  С точки зрения UX, нельзя показывать пустой экран.
+        // У пользователя создасться впечателение, что вся страница не работает.
+        // Увидев часть страницы, в нашем случае header, пользователь сможет отредактировать свои данные.
+        // Т.о. страница останется функциональной.
+        // Нельзя так же испольовать Promise.allSettled
+        // так как если запрос на user/me провалится, то запрос на карточки выполнится все равно.
+        // В текущей реализации отобразитсья хотя бы информация о пользователе.
         API.getUser()
             .then((user) => {
 
@@ -24,6 +32,7 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
             .then((initialCards) => {
                 setCards(initialCards)
             }) // получили карточки с api
+
             .catch( (e) => {
                 console.error(e)
             })
