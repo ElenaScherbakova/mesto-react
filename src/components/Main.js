@@ -27,12 +27,16 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
                 setUserDescription(user.about)
                 setUserAvatar(user.avatar)
 
-                return API.getInitialCards()
             }) // получили данные пользователя
+
+            .catch( (e) => {
+                console.error(e)
+            })
+
+        API.getInitialCards()
             .then((initialCards) => {
                 setCards(initialCards)
             }) // получили карточки с api
-
             .catch( (e) => {
                 console.error(e)
             })
