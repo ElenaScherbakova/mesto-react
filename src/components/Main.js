@@ -1,14 +1,20 @@
 import profilePencilSvg from "../images/pencil.svg";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import API from "../utils/API";
 import Card from "./Card";
+import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
 function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
 
-    const [userName, setUserName] = useState('')
-    const [userDescription, setUserDescription] = useState('')
-    const [userAvatar, setUserAvatar] = useState('')
+    const { name, about, avatar, _id } = useContext(CurrentUserContext)
     const [cards, setCards] = useState([])
+    const getCards = () => {
+        API.getInitialCards()
+            .then(setCards) // получили карточки с api
+            .catch( (e) => {
+                console.error(e)
+            })
+    }
 
     useEffect(() => {
         /* запрос данных пользователя */
@@ -20,27 +26,21 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
         // Нельзя так же испольовать Promise.allSettled
         // так как если запрос на user/me провалится, то запрос на карточки выполнится все равно.
         // В текущей реализации отобразитсья хотя бы информация о пользователе.
-        API.getUser()
-            .then((user) => {
+        getCards()
 
-                setUserName(user.name)
-                setUserDescription(user.about)
-                setUserAvatar(user.avatar)
-
-            }) // получили данные пользователя
-
-            .catch( (e) => {
-                console.error(e)
-            })
-
-        API.getInitialCards()
-            .then((initialCards) => {
-                setCards(initialCards)
-            }) // получили карточки с api
-            .catch( (e) => {
-                console.error(e)
-            })
     }, [])
+
+    const handleCardLike = (card) => {
+        const isLiked = card.likes.some(c => c._id === _id);
+
+        API.likeCard(card._id, !isLiked).then((newCard) => {
+            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
+        });
+    }
+
+    const handleCardRemove = (card) => {
+        API.removeCard(card._id).then(getCards)
+    }
 
     return (
         <main className="content">
@@ -51,20 +51,20 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
                 <div className="profile__image-container" onClick={onEditAvatar}>
                     <img alt="Фото пользователя"
                          className="profile__image"
-                         src={userAvatar}
+                         src={avatar}
                          />
                     <div className="profile__pencil"></div>
                 </div>
                 <div className="profile__info">
                     <div className="profile__header-line">
-                        <h1 className="profile__title">{userName}</h1>
+                        <h1 className="profile__title">{name}</h1>
                         <button type="button"
                                 className="profile__edit" onClick={onEditProfile}>
                             <img src={profilePencilSvg}
                                  alt="Редактировать" />
                         </button>
                     </div>
-                    <p className="profile__subtitle">{userDescription}</p>
+                    <p className="profile__subtitle">{about}</p>
                 </div>
                 <button type="button"
                         className="profile__plus"
@@ -78,7 +78,11 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
             <section className="elements">
                 {/* отображение массива карточек */}
                 { cards.map( card =>
-                    <Card key={card._id} card={card} onCardClick={onCardClick}/> )
+                    <Card key={card._id} card={card}
+                          onCardClick={onCardClick}
+                          onCardLike={ () => handleCardLike(card) }
+                          onCardRemove={() => handleCardRemove(card) }
+                    /> )
                 }
             </section>
 
