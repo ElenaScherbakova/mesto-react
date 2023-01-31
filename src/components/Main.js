@@ -4,43 +4,16 @@ import API from "../utils/API";
 import Card from "./Card";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
-function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
+function Main ({ onEditProfile,
+                   onAddPlace,
+                   onEditAvatar,
+                   onCardClick,
+                   onCardLike,
+                   onCardRemove,
+                   cards}) {
 
-    const { name, about, avatar, _id } = useContext(CurrentUserContext)
-    const [cards, setCards] = useState([])
-    const getCards = () => {
-        API.getInitialCards()
-            .then(setCards) // получили карточки с api
-            .catch( (e) => {
-                console.error(e)
-            })
-    }
+    const { name, about, avatar } = useContext(CurrentUserContext)
 
-    useEffect(() => {
-        /* запрос данных пользователя */
-        // Нельзя использовать Promise.all, так как если провалится один из запросов,
-        // весь Promise.all будет rejected.  С точки зрения UX, нельзя показывать пустой экран.
-        // У пользователя создастся впечателение, что вся страница не работает.
-        // Увидев часть страницы, в нашем случае header, пользователь сможет отредактировать свои данные.
-        // Т.о. страница останется функциональной.
-        // Нельзя так же испольовать Promise.allSettled
-        // так как если запрос на user/me провалится, то запрос на карточки выполнится все равно.
-        // В текущей реализации отобразитсья хотя бы информация о пользователе.
-        getCards()
-
-    }, [])
-
-    const handleCardLike = (card) => {
-        const isLiked = card.likes.some(c => c._id === _id);
-
-        API.likeCard(card._id, !isLiked).then((newCard) => {
-            setCards((state) => state.map((c) => c._id === card._id ? newCard : c));
-        });
-    }
-
-    const handleCardRemove = (card) => {
-        API.removeCard(card._id).then(getCards)
-    }
 
     return (
         <main className="content">
@@ -80,8 +53,8 @@ function Main ({ onEditProfile, onAddPlace, onEditAvatar, onCardClick }) {
                 { cards.map( card =>
                     <Card key={card._id} card={card}
                           onCardClick={onCardClick}
-                          onCardLike={ () => handleCardLike(card) }
-                          onCardRemove={() => handleCardRemove(card) }
+                          onCardLike={ () => onCardLike(card) }
+                          onCardRemove={() => onCardRemove(card) }
                     /> )
                 }
             </section>

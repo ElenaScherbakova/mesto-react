@@ -1,7 +1,7 @@
 import {useContext} from "react";
 import {CurrentUserContext} from "../contexts/CurrentUserContext";
 
-const Card = ({ card, onCardClick, onCardLike}) => {
+const Card = ({ card, onCardClick, onCardLike, onCardRemove}) => {
 
     const { _id } = useContext(CurrentUserContext)
     const currentUserLiked = card.likes.some( l => l._id === _id )
@@ -18,7 +18,8 @@ const Card = ({ card, onCardClick, onCardLike}) => {
                      src={card.link} onClick={handleClick}/>
                 { card.owner._id === _id &&
                     <button type="button"
-                            className="card__basket"></button>
+                            className="card__basket"
+                            onClick={onCardRemove}></button>
                 }
             </div>
             <div className="card__title">

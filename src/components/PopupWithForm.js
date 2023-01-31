@@ -1,12 +1,16 @@
 import {useEffect} from "react";
 
-function PopupWithForm({title, className, idForm, name, children, isOpen, onClose, submitButtonTitle}) {
+function PopupWithForm({title, className, idForm, name, children, isOpen, onClose, submitButtonTitle, onSubmit }) {
     const handleEscClose = (event) => {
         if (event.key === 'Escape') {
             onClose()
         }
     }
 
+    const _onSubmit = (e) => {
+        e.preventDefault()
+        onSubmit(e)
+    }
     const closePopupByOverlay = (event) => {
         if (event.target.classList.contains('popup') || event.target.classList.contains('popup__block')) {
             onClose()
@@ -31,9 +35,10 @@ function PopupWithForm({title, className, idForm, name, children, isOpen, onClos
                 <h3 className="popup__title">{title}</h3>
                 <form id={idForm}
                       name={name}
+                      onSubmit={_onSubmit}
                       className="popup__form" noValidate>
                     {children}
-                    <button disabled className="popup__button popup__button_edit"
+                    <button className="popup__button popup__button_edit"
                             type="submit">{submitButtonTitle}
                     </button>
                 </form>
