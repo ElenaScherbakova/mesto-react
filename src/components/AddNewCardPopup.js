@@ -17,10 +17,10 @@ export const AddNewCardPopup = ({ closeAllPopups, isOpen, onUpdate }) => {
     }
 
     return <PopupWithForm submitButtonTitle={'Создать'}
-      name={'card-form'}
-      idForm={'place-form'}
-      className={'popup_type_plus'}
-      title={'Новое место'}
+      name='card-form'
+      idForm='place-form'
+      className='popup_type_plus'
+      title='Новое место'
       isOpen={isOpen}
       onSubmit={onSubmit}
       onClose={closeAllPopups }

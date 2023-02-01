@@ -7,7 +7,7 @@ function PopupWithForm({title, className, idForm, name, children, isOpen, onClos
         }
     }
 
-    const _onSubmit = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault()
         onSubmit(e)
     }
@@ -35,7 +35,7 @@ function PopupWithForm({title, className, idForm, name, children, isOpen, onClos
                 <h3 className="popup__title">{title}</h3>
                 <form id={idForm}
                       name={name}
-                      onSubmit={_onSubmit}
+                      onSubmit={handleSubmit}
                       className="popup__form" noValidate>
                     {children}
                     <button className="popup__button popup__button_edit"

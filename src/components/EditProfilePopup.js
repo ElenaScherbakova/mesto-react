@@ -8,9 +8,11 @@ export const EditProfilePopup = ({ isOpen, closeAllPopups, onUpdate }) => {
     const [_about, setAbout] = useState(about ?? '')
 
     useEffect(() => {
-        setAbout(about)
-        setName(name)
-    }, [name,about])
+        if (isOpen) {
+            setAbout(about)
+            setName(name)
+        }
+    }, [name,about,isOpen])
     const onSubmit = () => {
         onUpdate({
             name: _name,

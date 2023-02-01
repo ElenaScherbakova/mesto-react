@@ -23,7 +23,7 @@ const Card = ({ card, onCardClick, onCardLike, onCardRemove}) => {
                 }
             </div>
             <div className="card__title">
-                <h2 className="card__text"></h2>
+                <h2 className="card__text">{card.name}</h2>
                 <div className="card__heart">
                     <button type="button"
                             className={className}
