@@ -3,76 +3,61 @@ class Api {
         this.options = options
         this._getJSON = (res) => {
             if (res.ok) { // res.status == '200'
-                return res.json()
+                return res.json().then( ({ data }) => data )
             } else {
+                if (res.status === 403 || res.status === 401) {
+                    localStorage.removeItem('token')
+                }
                 return Promise.reject(res.status)
             }
         }
     }
 
+    sendRequest(url, method, payload ) {
+        const token = localStorage.getItem('token')
+        return fetch(`${this.options.baseUrl}${url}`, {
+            method,
+            headers: {
+                ...this.options.headers,
+                'Authorization': `Bearer ${token}`
+            },
+            body: payload ? JSON.stringify(payload) : undefined
+        })
+        .then(this._getJSON)
+    }
     getInitialCards() {
-        return fetch(`${this.options.baseUrl}/cards`,
-            {
-                headers: this.options.headers
-            } ).then(this._getJSON)
+        return this.sendRequest('/cards', 'GET')
     }
 
     createNewCard(name, link) {
-        return  fetch(`${this.options.baseUrl}/cards`, {
-            method: 'POST',
-            headers: this.options.headers,
-            body: JSON.stringify({ name, link })
-        }).then(this._getJSON)
+        return this.sendRequest(`/cards`, 'POST', { name, link })
     }
 
     removeCard(cardId) {
-        return  fetch(`${this.options.baseUrl}/cards/${cardId}`, {
-            method: 'DELETE',
-            headers: this.options.headers
-        }).then(this._getJSON)
+        return  this.sendRequest(`/cards/${cardId}`, 'DELETE')
     }
 
     getUser() {
-       return fetch(`${this.options.userUrl}/users/me`,
-           {
-               method: 'GET',
-               headers: this.options.headers
-           } ).then(this._getJSON)
-
+        return this.sendRequest('/users/me', 'GET')
     }
 
     updateUser(name, about) {
-       return  fetch(`${this.options.baseUrl}/users/me`, {
-            method: 'PATCH',
-            headers: this.options.headers,
-            body: JSON.stringify({ name, about })
-        }).then(this._getJSON)
+        return this.sendRequest(`/users/me`, 'PATCH', { name, about })
     }
 
     changeAvatar (avatar) {
-        return  fetch(`${this.options.baseUrl}/users/me/avatar`, {
-            method: 'PATCH',
-            headers: this.options.headers,
-            body: JSON.stringify({ avatar })
-        }).then(this._getJSON)
+        return this.sendRequest(`/users/me/avatar`, 'PATCH', { avatar })
     }
 
     likeCard(cardId, doLike) {
-        return  fetch(`${this.options.baseUrl}/cards/${cardId}/likes`, {
-            method : doLike
-                ? 'PUT'
-                : 'DELETE',
-            headers: this.options.headers
-        }).then(this._getJSON)
+        return this.sendRequest(`/cards/${cardId}/likes`, doLike ? 'PUT' : 'DELETE')
     }
 
 }
 
 const api = new Api({
-    baseUrl: 'https://mesto.nomoreparties.co/v1/cohort-56',
-    userUrl: 'https://nomoreparties.co/v1/cohort-56',
+    baseUrl: 'https://auth.nomoreparties.co',
     headers: {
-        authorization: '85969927-1936-42af-ae85-85e777a25d0e',
         'Content-Type': 'application/json'
     }
 })

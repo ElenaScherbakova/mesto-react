@@ -4,7 +4,7 @@ import {CurrentUserContext} from "../contexts/CurrentUserContext";
 const Card = ({ card, onCardClick, onCardLike, onCardRemove}) => {
 
     const { _id } = useContext(CurrentUserContext)
-    const currentUserLiked = card.likes.some( l => l._id === _id )
+    const currentUserLiked = card.likes.indexOf( _id ) >= 0
     const className = 'card__like' + (currentUserLiked ? ' card__like_active' : '')
     function handleClick () {
         onCardClick(card)
@@ -16,7 +16,7 @@ const Card = ({ card, onCardClick, onCardLike, onCardRemove}) => {
             <div className="card__place">
                 <img className="card__photo"
                      src={card.link} onClick={handleClick}/>
-                { card.owner._id === _id &&
+                { card.owner === _id &&
                     <button type="button"
                             className="card__basket"
                             onClick={onCardRemove}></button>

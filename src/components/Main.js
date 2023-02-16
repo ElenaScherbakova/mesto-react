@@ -10,10 +10,9 @@ function Main ({ onEditProfile,
                    onCardClick,
                    onCardLike,
                    onCardRemove,
-                   cards}) {
+                   cards = []}) {
 
     const { name, about, avatar } = useContext(CurrentUserContext)
-
 
     return (
         <main className="content">
