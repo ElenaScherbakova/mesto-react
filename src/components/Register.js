@@ -3,7 +3,7 @@ import {Link, useNavigate} from 'react-router-dom';
 import * as auth from '../auth.js';
 
 
-const Register = () => {
+const Register = ({ onRegister, onFail }) => {
     const [formValue, setFormValue] = useState({
         email: '',
         password: ''
@@ -22,10 +22,14 @@ const Register = () => {
     }
     const handleSubmit = (e) => {
         e.preventDefault();
-             auth.register( formValue.email, formValue.password ).then((res) => {
-                     navigate('/signin', {replace: true}); // перенаправляем на страницу входа
-                }
-            );
+        auth.register( formValue.email, formValue.password )
+            .then((res) => {
+                onRegister()
+                navigate('/signin', {replace: true}); // перенаправляем на страницу входа
+            })
+            .catch(() => {
+                onFail()
+            });
 
     }
 

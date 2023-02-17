@@ -11,6 +11,7 @@ import Login from './Login.js';
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import Register from "./Register";
 import ProtectedRouteElement from './ProtectedRoute';
+import InfoTooltip from "./InfoTooltip";
 
 function App() {
 
@@ -21,10 +22,25 @@ function App() {
     const [currentUser, setCurrentUser] = useState({})
     const [cards, setCards] = useState([])
     const [loggedIn, setLoggedIn] = useState(false)
+    const [isPopupInfotoolOpen, setPopupInfotoolOpen] = useState(false)
+    const [messageStatus, setMessageStatus] = useState(null)
 
     const onLogin = () => {
         const token = localStorage.getItem('token')
         setLoggedIn(token?.length > 0)
+    }
+
+    const onFail = () => {
+        openPopupInfotool('error')
+    }
+
+    const onRegister = () => {
+        openPopupInfotool('confirmation')
+    }
+
+    const handleLogout = () => {
+        setLoggedIn(false)
+        setCurrentUser({})
     }
     const getCards = () => {
         request(api.getInitialCards())
@@ -89,6 +105,11 @@ function App() {
         setEditAvatarPopupOpen(true)
     }
 
+    const openPopupInfotool = (type) => {
+        setPopupInfotoolOpen(true)
+        setMessageStatus(type)
+    }
+
     {/* закртие попапа*/
     }
     const closeAllPopups = () => {
@@ -96,6 +117,7 @@ function App() {
         setAddPlacePopupOpen(false)
         setEditProfilePopupOpen(false)
         setSelectedCard(null)
+        setPopupInfotoolOpen(false)
     }
 
     const handleCardClick = (card) => {
@@ -128,7 +150,7 @@ function App() {
     return <CurrentUserContext.Provider value={currentUser}>
         <div className="page">
             <BrowserRouter>
-                <Header/>
+                <Header loggedIn={loggedIn} onSignOut={handleLogout}/>
                 <Routes>
                     <Route path="/" element={
                         <ProtectedRouteElement>
@@ -143,8 +165,8 @@ function App() {
                       }
                     />
 
-                    <Route path="/signup" element={<Register/>}/>
-                    <Route path="/signin" element={<Login onLogin={onLogin}/>}/>
+                    <Route path="/signup" element={<Register onRegister={onRegister} onFail={onFail}/>}/>
+                    <Route path="/signin" element={<Login onLogin={onLogin} onFail={onFail}/>}/>
                 </Routes>
             </BrowserRouter>
         </div>
@@ -159,6 +181,12 @@ function App() {
         <AddNewCardPopup closeAllPopups={closeAllPopups}
                          isOpen={isAddPlacePopupOpen}
                          onUpdate={handleAddNewCard}
+        />
+
+        <InfoTooltip status={messageStatus}
+                     isOpen={isPopupInfotoolOpen}
+                     closeAllPopups={closeAllPopups}
+
         />
 
         {selectedCard && <ImagePopup card={selectedCard}
